@@ -105,8 +105,6 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
                 onPressed: () async {
                   if (itemKey == null) {
-                    nameC.clear();
-                    quantityC.clear();
                     _createItem({
                       "name": nameC.text,
                       "quantity": quantityC.text,
