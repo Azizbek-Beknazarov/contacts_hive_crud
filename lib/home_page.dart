@@ -13,7 +13,6 @@ class _HomePageState extends State<HomePage> {
   final _shop = Hive.box("shop");
   final nameC = TextEditingController();
 
-  // final quantityC = TextEditingController();
   bool isUpdate = false;
 
   @override
@@ -23,7 +22,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext context,) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Ertangi vazifalar"),
@@ -48,7 +49,6 @@ class _HomePageState extends State<HomePage> {
             },
             itemCount: _items.length,
           );
-
         },
       ),
       bottomNavigationBar: SafeArea(
@@ -182,7 +182,6 @@ class _HomePageState extends State<HomePage> {
       return {
         "key": key,
         "name": item["name"],
-        // "quantity": item["quantity"],
       };
     }).toList();
 
