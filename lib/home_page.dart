@@ -11,9 +11,10 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> _items = [];
   final _shop = Hive.box("shop");
-
   final nameC = TextEditingController();
-  final quantityC = TextEditingController();
+
+  // final quantityC = TextEditingController();
+  bool isUpdate = false;
 
   @override
   void initState() {
@@ -22,44 +23,77 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context,) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Hive"),
+        title: const Text("Ertangi vazifalar"),
       ),
-      body: ListView.builder(
-        itemBuilder: (_, index) {
-          final currentItem = _items[index];
-          return Card(
-            color: Colors.orange.shade100,
-            child: ListTile(
-              title: Text(currentItem["name"]),
-              subtitle: Text(currentItem["quantity"].toString()),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      _showForm(context, currentItem["key"]);
-                    },
-                    icon: const Icon(Icons.edit),
-                  ),
-                  IconButton(
-                    onPressed: () => _deleteItem(currentItem["key"]),
-                    icon: const Icon(Icons.delete),
-                  ),
-                ],
-              ),
-            ),
+      body: StreamBuilder(
+        stream: null,
+        builder: (context, snapshot) {
+          return ListView.builder(
+            itemBuilder: (_, index) {
+              final currentItem = _items[index];
+              return ListTile(
+                onTap: () {
+                  _showForm(context, currentItem["key"]);
+                },
+                title: Text(currentItem["name"]),
+                contentPadding: EdgeInsets.zero,
+                trailing: IconButton(
+                  onPressed: () => _deleteItem(currentItem["key"]),
+                  icon: Image.asset("assets/png/subway.png"),
+                ),
+              );
+            },
+            itemCount: _items.length,
           );
+
         },
-        itemCount: _items.length,
       ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () => _showForm(
-          context,
-          null,
+      bottomNavigationBar: SafeArea(
+        minimum: MediaQuery.of(context).viewInsets,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: nameC,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        bottomLeft: Radius.circular(12),
+                      )),
+                      labelText: "Name",
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: () => _showForm(
+                    context,
+                    null,
+                  ),
+                  child: Container(
+                    height: 65,
+                    width: 65,
+                    decoration: const BoxDecoration(
+                        color: Color(0xff333333),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        )),
+                    child: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -70,7 +104,7 @@ class _HomePageState extends State<HomePage> {
       final existingItem =
           _items.firstWhere((element) => element["key"] == itemKey);
       nameC.text = existingItem["name"];
-      quantityC.text = existingItem["quantity"];
+      // quantityC.text = existingItem["quantity"];
     }
 
     showModalBottomSheet(
@@ -95,19 +129,11 @@ class _HomePageState extends State<HomePage> {
                 hintText: 'name',
               ),
             ),
-            TextField(
-              controller: quantityC,
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                hintText: 'quantity',
-              ),
-            ),
             ElevatedButton(
                 onPressed: () async {
                   if (itemKey == null) {
                     _createItem({
                       "name": nameC.text,
-                      "quantity": quantityC.text,
                     });
                   }
                   if (itemKey != null) {
@@ -115,13 +141,11 @@ class _HomePageState extends State<HomePage> {
                       itemKey,
                       {
                         "name": nameC.text,
-                        "quantity": quantityC.text,
                       },
                     );
                   }
 
                   nameC.clear();
-                  quantityC.clear();
                   Navigator.pop(context);
                 },
                 child:
@@ -158,7 +182,7 @@ class _HomePageState extends State<HomePage> {
       return {
         "key": key,
         "name": item["name"],
-        "quantity": item["quantity"],
+        // "quantity": item["quantity"],
       };
     }).toList();
 
